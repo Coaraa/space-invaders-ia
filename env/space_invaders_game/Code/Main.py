@@ -1,10 +1,10 @@
 # Tutorial: https://youtu.be/o-6pADy5Mdg
 
 import pygame, sys
-from .Player import Player
-from . import Obstacle
-from .Alien import Alien, Extra
-from .Laser import Laser
+from Player import Player
+import Obstacle
+from Alien import Alien, Extra
+from Laser import Laser
 from random import choice, randint
 import os
 
