@@ -1,5 +1,5 @@
 import pygame
-from Laser import Laser
+from .Laser import Laser
 import os
 
 
@@ -52,8 +52,28 @@ class Player(pygame.sprite.Sprite):
     def shoot_laser(self):
         self.lasers.add(Laser(self.rect.center, -8, self.rect.bottom))
 
-    def update(self):
-        self.get_input()
+    def update(self, use_rl=False, action=None):
+        if use_rl and action is not None:
+            self.apply_action(action)
+        else:
+            self.get_input()
+
         self.constraint()
         self.recharge()
         self.lasers.update()
+        
+    def apply_action(self, action):
+        """
+        0 = rien
+        1 = gauche
+        2 = droite
+        3 = tirer
+        """
+        if action == 1:
+            self.rect.x -= self.speed
+        elif action == 2:
+            self.rect.x += self.speed
+        elif action == 3 and self.ready:
+            self.shoot_laser()
+            self.ready = False
+            self.laser_time = pygame.time.get_ticks()

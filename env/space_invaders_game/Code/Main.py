@@ -1,10 +1,10 @@
 # Tutorial: https://youtu.be/o-6pADy5Mdg
 
 import pygame, sys
-from Player import Player
-import Obstacle
-from Alien import Alien, Extra
-from Laser import Laser
+from .Player import Player
+from . import Obstacle
+from .Alien import Alien, Extra
+from .Laser import Laser
 from random import choice, randint
 import os
 
@@ -14,20 +14,27 @@ os.chdir(os.path.dirname(os.path.abspath(__file__)))
 
 
 class Game:
-    def __init__(self):
+    def __init__(self, screen_width, screen_height):
+        self.screen_width = screen_width
+        self.screen_height = screen_height
+
         # Game Window UI and Icon
         pygame .display.set_caption("Space Invaders")
         pygame_icon = pygame.image.load("../Graphics/Red.png")
         pygame.display.set_icon(pygame_icon)
 
         # Player Setup
-        player_sprite = Player((screen_width / 2, screen_height), screen_width, 5)
+        player_sprite = Player(
+            (self.screen_width / 2, self.screen_height),
+            self.screen_width,
+            5
+        )
         self.player = pygame.sprite.GroupSingle(player_sprite)
 
         # Health and Score Setup
         self.lives = 3
         self.live_surf = pygame.image.load("../Graphics/Player.png").convert_alpha()
-        self.live_x_start_pos = screen_width - (self.live_surf.get_size()[0] * 2 + 20)
+        self.live_x_start_pos = self.screen_width - (self.live_surf.get_size()[0] * 2 + 20)
         self.score = 0
         self.font = pygame.font.Font("../Font/Pixeled.ttf", 20)
 
@@ -36,8 +43,8 @@ class Game:
         self.block_size = 6
         self.blocks = pygame.sprite.Group()
         self.obstacle_amount = 4
-        self.obstacle_x_positions = [num * (screen_width / self.obstacle_amount) for num in range(self.obstacle_amount)]
-        self.create_multiple_obstacles(*self.obstacle_x_positions, x_start = screen_width / 15, y_start = 480)
+        self.obstacle_x_positions = [num * (self.screen_width / self.obstacle_amount) for num in range(self.obstacle_amount)]
+        self.create_multiple_obstacles(*self.obstacle_x_positions, x_start = self.screen_width / 15, y_start = 480)
 
         # Alien Setup
         self.aliens = pygame.sprite.Group()
@@ -85,7 +92,7 @@ class Game:
     def alien_position_checker(self):
         all_aliens = self.aliens.sprites()
         for alien in all_aliens:
-            if alien.rect.right >= screen_width:
+            if alien.rect.right >= self.screen_width:
                 self.alien_direction = -1
                 self.alien_move_down(2)
             elif alien.rect.left <= 0:
@@ -100,14 +107,14 @@ class Game:
     def alien_shoot(self):
         if self.aliens.sprites():
             random_alien = choice(self.aliens.sprites())
-            laser_sprite = Laser(random_alien.rect.center, 6, screen_height)
+            laser_sprite = Laser(random_alien.rect.center, 6, self.screen_height)
             self.alien_lasers.add(laser_sprite)
             self.laser_sound.play()
 
     def extra_alien_timer(self):
         self.extra_spawn_time -= 1
         if self.extra_spawn_time <= 0:
-            self.extra.add(Extra(choice(["right", "left"]), screen_width, ))
+            self.extra.add(Extra(choice(["right", "left"]), self.screen_width, ))
             self.extra_spawn_time = randint(400, 800)
 
     def collision_checks(self):
@@ -176,8 +183,27 @@ class Game:
     def victory_message(self):
         if not self.aliens.sprites():
             victory_surf = self.font.render("You Won!", False, "White")
-            victory_rect = victory_surf.get_rect(center = (screen_width / 2, screen_height/ 2))
+            victory_rect = victory_surf.get_rect(center = (self.screen_width / 2, self.screen_height/ 2))
             screen.blit(victory_surf, victory_rect)
+
+    def step(self, action):
+        self.player.sprite.update(use_rl=True, action=action)
+
+        self.alien_lasers.update()
+        self.extra.update()
+        self.aliens.update(self.alien_direction)
+        self.alien_position_checker()
+        self.extra_alien_timer()
+        self.collision_checks()
+
+        done = False
+        if self.lives <= 0:
+            done = True
+        if not self.aliens.sprites():
+            done = True
+
+        return done
+
 
     def run(self):
         # Draw and Update All Sprite Groups
@@ -215,7 +241,7 @@ class CRT:
 
     def draw(self):
         self.tv.set_alpha(randint(75, 90))
-        self.create_crt_lines()
+        self.create_crt_lines() 
         screen.blit(self.tv, (0, 0))
 
 
@@ -225,7 +251,7 @@ if __name__ == "__main__":
     screen_height = 600
     screen = pygame.display.set_mode((screen_width, screen_height))
     clock = pygame.time.Clock()
-    game = Game()
+    game = Game(screen_width, screen_height)
     crt = CRT()
 
     ALIENLASER = pygame.USEREVENT + 1
