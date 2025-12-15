@@ -1,3 +1,4 @@
+import numpy as np
 import random
 from collections import deque
 
@@ -19,10 +20,10 @@ class ReplayBuffer:
         batch = random.sample(self.buffer, batch_size)
         states, actions, rewards, next_states, dones = zip(*batch)
         return (
-            torch.FloatTensor(states),
+            torch.FloatTensor(np.array(states)),
             torch.LongTensor(actions),
             torch.FloatTensor(rewards),
-            torch.FloatTensor(next_states),
+            torch.FloatTensor(np.array(next_states)),
             torch.FloatTensor(dones)
         )
 

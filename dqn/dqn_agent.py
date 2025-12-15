@@ -61,9 +61,6 @@ class DQNAgent:
         loss.backward()
         self.optimizer.step()
 
-        if self.epsilon > self.epsilon_min:
-            self.epsilon *= self.epsilon_decay
-
     def update_target_network(self):
         self.target_network.load_state_dict(self.q_network.state_dict())
 
@@ -90,10 +87,15 @@ def train_dqn(env, episodes=500):
 
             state = next_state
             total_reward += reward
-
+            
+        if agent.epsilon > agent.epsilon_min:
+            agent.epsilon *= agent.epsilon_decay
+            
         agent.update_target_network()
         rewards_history.append(total_reward)
 
         print(f"Episode {episode+1}/{episodes} - Reward: {total_reward:.2f} - Epsilon: {agent.epsilon:.3f}")
+
+    agent.epsilon = max(agent.epsilon_min, agent.epsilon * agent.epsilon_decay)
 
     return rewards_history

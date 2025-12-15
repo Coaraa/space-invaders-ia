@@ -1,5 +1,5 @@
 import pygame
-from Laser import Laser
+from .Laser import Laser
 import os
 
 
