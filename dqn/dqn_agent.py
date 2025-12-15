@@ -97,5 +97,8 @@ def train_dqn(env, episodes=500):
         print(f"Episode {episode+1}/{episodes} - Reward: {total_reward:.2f} - Epsilon: {agent.epsilon:.3f}")
 
     agent.epsilon = max(agent.epsilon_min, agent.epsilon * agent.epsilon_decay)
+    print("Entraînement terminé. Sauvegarde du modèle...")
+    torch.save(agent.q_network.state_dict(), "dqn_space_invaders.pth")
+    print("Modèle sauvegardé sous 'dqn_space_invaders.pth'")
 
     return rewards_history
