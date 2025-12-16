@@ -37,6 +37,9 @@ class SpaceInvadersEnv:
 
         return self._get_state()
 
+    def test(self):
+        self.max_steps = float('inf')
+
     # ------------------------
     # STEP
     # ------------------------
@@ -174,7 +177,6 @@ class SpaceInvadersEnv:
                 
         if action in [1, 2]:  # gauche ou droite
             reward += 0.002
-
 
 
         # Mise à jour mémoire

@@ -1,3 +1,4 @@
+import os
 import random
 
 import torch
@@ -98,7 +99,11 @@ def train_dqn(env, episodes=500):
 
     agent.epsilon = max(agent.epsilon_min, agent.epsilon * agent.epsilon_decay)
     print("Entraînement terminé. Sauvegarde du modèle...")
-    torch.save(agent.q_network.state_dict(), "dqn_space_invaders.pth")
+
+    models_dir = "models"
+    os.makedirs(models_dir, exist_ok=True)
+    model_path = os.path.join(models_dir, "dqn_space_invaders.pth")
+    torch.save(agent.q_network.state_dict(), model_path)
     print("Modèle sauvegardé sous 'dqn_space_invaders.pth'")
 
     return rewards_history

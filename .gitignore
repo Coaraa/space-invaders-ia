@@ -35,7 +35,6 @@ results/
 # =========================
 # Pygame / assets temporaires
 # =========================
-*.wav
 *.mp3
 *.ogg
 *.mp4
