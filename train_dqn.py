@@ -18,9 +18,9 @@ pygame.display.set_mode((100, 100))
 game = Game(600, 600, screen=None)
 env = SpaceInvadersEnv(game)
 
-print("=== DÉBUT DE L'ENTRAINEMENT DQN ===")
-rewards = train_dqn(env, episodes=10)
-print("=== FIN DE L'ENTRAINEMENT DQN ===")
+# print("=== DÉBUT DE L'ENTRAINEMENT DQN ===")
+# rewards = train_dqn(env, episodes=500)
+# print("=== FIN DE L'ENTRAINEMENT DQN ===")
 
 
 
